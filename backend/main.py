@@ -16,7 +16,7 @@ from supabase_client import supabase_repo
 
 # Configuration from environment variables
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://github-issue-automation.onrender.com")
 
 # Try to import Portia, fallback if not available
 try:
