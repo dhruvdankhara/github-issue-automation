@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Repository } from "../../lib/supabase";
+import { api } from "../../lib/api";
 
 interface RepositoryState {
   repositories: Repository[];
@@ -19,14 +20,8 @@ const initialState: RepositoryState = {
 export const fetchRepositories = createAsyncThunk(
   "repositories/fetchRepositories",
   async (userId: string) => {
-    const response = await fetch(
-      `http://localhost:8000/repositories/${userId}`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.repositories as Repository[];
+    const response = await api.get(`/repositories/${userId}`);
+    return response.data.repositories as Repository[];
   }
 );
 
@@ -44,26 +39,15 @@ export const addRepository = createAsyncThunk(
       url: string;
     };
   }) => {
-    const response = await fetch(
-      `http://localhost:8000/repositories?user_id=${userId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(repoData),
-      }
+    const response = await api.post(
+      `/repositories?user_id=${userId}`,
+      repoData
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (data.success) {
-      return data.repository as Repository;
+    if (response.data.success) {
+      return response.data.repository as Repository;
     } else {
-      throw new Error(data.message || "Failed to add repository");
+      throw new Error(response.data.message || "Failed to add repository");
     }
   }
 );
@@ -77,22 +61,14 @@ export const deleteRepository = createAsyncThunk(
     repositoryId: string;
     userId: string;
   }) => {
-    const response = await fetch(
-      `http://localhost:8000/repositories/${repositoryId}?user_id=${userId}`,
-      {
-        method: "DELETE",
-      }
+    const response = await api.delete(
+      `/repositories/${repositoryId}?user_id=${userId}`
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    if (data.success) {
+    if (response.data.success) {
       return repositoryId;
     } else {
-      throw new Error(data.message || "Failed to delete repository");
+      throw new Error(response.data.message || "Failed to delete repository");
     }
   }
 );

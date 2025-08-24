@@ -10,6 +10,7 @@ import {
 } from "./ui/dialog";
 import { BookOpen, Copy, ExternalLink, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { API_BASE_URL } from "../lib/api";
 
 interface ManualWebhookGuideProps {
   userId: string;
@@ -22,7 +23,7 @@ export function ManualWebhookGuide({
 }: ManualWebhookGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const webhookUrl = `http://localhost:8000/github/webhook/${userId}`;
+  const webhookUrl = `${API_BASE_URL}/github/webhook/${userId}`;
 
   const copyWebhookUrl = () => {
     navigator.clipboard.writeText(webhookUrl);

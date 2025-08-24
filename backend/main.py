@@ -14,6 +14,10 @@ from urllib.parse import urlencode
 # Import Supabase client
 from supabase_client import supabase_repo
 
+# Configuration from environment variables
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+
 # Try to import Portia, fallback if not available
 try:
     from portia_setup import portia, task0
@@ -25,7 +29,7 @@ except ImportError:
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",  
+    FRONTEND_URL,  
 ]
 
 app.add_middleware(
@@ -54,7 +58,7 @@ in_memory_repositories: Dict[str, List[Dict]] = {}  # user_id -> repositories li
 # GitHub OAuth configuration
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "your_github_client_id")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "your_github_client_secret")
-GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI", "http://localhost:8000/auth/github/callback")
+GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI", f"{BACKEND_URL}/auth/github/callback")
 
 security = HTTPBearer(auto_error=False)
 
@@ -327,7 +331,7 @@ def github_auth_login(user_id: str):
 async def github_oauth_callback_get(code: str, state: Optional[str] = None):
     """Handle GitHub OAuth callback (GET redirect from GitHub)"""
     # Redirect to frontend with the code for processing
-    frontend_url = f"http://localhost:5173/auth/callback?code={code}&state={state or 'github_auth'}"
+    frontend_url = f"{FRONTEND_URL}/auth/callback?code={code}&state={state or 'github_auth'}"
     return RedirectResponse(url=frontend_url)
 
 @app.post("/auth/github/callback")
@@ -603,7 +607,7 @@ def setup_github_webhook(user_id: str, request: WebhookSetupRequest):
             "pull_request_review_comment"
         ],
         "config": {
-            "url": f"http://localhost:8000/github-webhook",
+            "url": f"{BACKEND_URL}/github-webhook",
             "content_type": "json",
             "secret": webhook_secret,
             "insecure_ssl": "0"
@@ -693,7 +697,7 @@ def get_webhook_status(user_id: str, repo_full_name: Optional[str] = None):
             webhooks = response.json()
             
             # Look for our webhook
-            our_webhook_url = "http://localhost:8000/github-webhook"
+            our_webhook_url = f"{BACKEND_URL}/github-webhook"
             our_webhook = None
             
             for webhook in webhooks:

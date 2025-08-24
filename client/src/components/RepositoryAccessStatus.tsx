@@ -9,6 +9,7 @@ import {
   Unlock,
   RefreshCw,
 } from "lucide-react";
+import { API_BASE_URL } from "../lib/api";
 import { toast } from "sonner";
 import type { RepositoryAccess } from "../lib/supabase";
 
@@ -44,7 +45,7 @@ export function RepositoryAccessStatus({
       setLoading(true);
       try {
         const response = await fetch(
-          "http://localhost:8000/repository/access/verify",
+          `${API_BASE_URL}/repository/access/verify`,
           {
             method: "POST",
             headers: {
@@ -89,19 +90,16 @@ export function RepositoryAccessStatus({
 
     setChecking(true);
     try {
-      const response = await fetch(
-        "http://localhost:8000/repository/access/verify",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            repo_full_name: repoFullName,
-            user_id: userId,
-          }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/repository/access/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          repo_full_name: repoFullName,
+          user_id: userId,
+        }),
+      });
 
       if (response.ok) {
         const accessData = await response.json();

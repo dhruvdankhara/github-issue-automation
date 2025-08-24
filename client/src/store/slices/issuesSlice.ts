@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { GitHubIssue, AutomationStatus } from "../../lib/supabase";
+import { api } from "../../lib/api";
 
 interface IssuesState {
   issues: GitHubIssue[];
@@ -83,21 +84,18 @@ export const fetchIssues = createAsyncThunk(
 
     // Fetch automation statuses for all issues
     try {
-      const automationResponse = await fetch(
-        `http://localhost:8000/automation-status/${owner}/${repo}`
+      const automationResponse = await api.get(
+        `/automation-status/${owner}/${repo}`
       );
 
-      if (automationResponse.ok) {
-        const automationData = await automationResponse.json();
-        const automationStatuses = automationData.automation_statuses || {};
+      const automationData = automationResponse.data;
+      const automationStatuses = automationData.automation_statuses || {};
 
-        // Merge automation status with issues
-        return issues.map((issue) => ({
-          ...issue,
-          automation_status:
-            automationStatuses[issue.number.toString()] || null,
-        }));
-      }
+      // Merge automation status with issues
+      return issues.map((issue) => ({
+        ...issue,
+        automation_status: automationStatuses[issue.number.toString()] || null,
+      }));
     } catch (error) {
       console.warn("Failed to fetch automation statuses:", error);
     }
@@ -117,19 +115,7 @@ export const retryAutomation = createAsyncThunk(
     repo: string;
     issueNumber: number;
   }) => {
-    const response = await fetch(
-      `http://localhost:8000/automation-status/${owner}/${repo}/${issueNumber}/retry`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to retry automation: ${response.status}`);
-    }
+    await api.post(`/automation-status/${owner}/${repo}/${issueNumber}/retry`);
 
     return { issueNumber, status: "pending" };
   }

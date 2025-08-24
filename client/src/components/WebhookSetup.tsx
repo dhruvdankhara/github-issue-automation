@@ -10,6 +10,7 @@ import {
 } from "./ui/dialog";
 import { Webhook, CheckCircle, Loader2 } from "lucide-react";
 import { ManualWebhookGuide } from "./ManualWebhookGuide";
+import { api } from "../lib/api";
 
 interface WebhookSetupProps {
   userId: string;
@@ -45,17 +46,12 @@ export function WebhookSetup({
 
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:8000/github/webhook/status/${userId}?repo_full_name=${encodeURIComponent(
+      const response = await api.get(
+        `/github/webhook/status/${userId}?repo_full_name=${encodeURIComponent(
           repoFullName
         )}`
       );
-      if (response.ok) {
-        const data = await response.json();
-        setWebhookStatus(data);
-      } else {
-        console.error("Failed to fetch webhook status");
-      }
+      setWebhookStatus(response.data);
     } catch (error) {
       console.error("Error fetching webhook status:", error);
     } finally {

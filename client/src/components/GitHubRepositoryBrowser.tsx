@@ -14,6 +14,7 @@ import {
   Lock,
   Globe,
 } from "lucide-react";
+import { API_BASE_URL } from "../lib/api";
 import { toast } from "sonner";
 
 interface GitHubRepository {
@@ -69,7 +70,7 @@ export function GitHubRepositoryBrowser({
 
     try {
       const response = await fetch(
-        `http://localhost:8000/github/repositories/${userId}?per_page=100`
+        `${API_BASE_URL}/github/repositories/${userId}?per_page=100`
       );
 
       if (response.ok) {

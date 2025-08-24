@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { AlertCircle, CheckCircle, Github, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { GitHubAuthStatus } from "../lib/supabase";
+import { API_BASE_URL } from "../lib/api";
 
 interface GitHubAuthProps {
   userId: string;
@@ -36,13 +37,13 @@ export function GitHubAuth({ userId, onAuthUpdate }: GitHubAuthProps) {
     try {
       // Try the provided user ID first
       let response = await fetch(
-        `http://localhost:8000/auth/github/status/${userId}`
+        `${API_BASE_URL}/auth/github/status/${userId}`
       );
 
       // If that fails and we have a different userId, try default_user
       if (!response.ok && userId !== "default_user") {
         response = await fetch(
-          `http://localhost:8000/auth/github/status/default_user`
+          `${API_BASE_URL}/auth/github/status/default_user`
         );
       }
 
@@ -72,13 +73,13 @@ export function GitHubAuth({ userId, onAuthUpdate }: GitHubAuthProps) {
       try {
         // Try the provided user ID first
         let response = await fetch(
-          `http://localhost:8000/auth/github/status/${userId}`
+          `${API_BASE_URL}/auth/github/status/${userId}`
         );
 
         // If that fails and we have a different userId, try default_user
         if (!response.ok && userId !== "default_user") {
           response = await fetch(
-            `http://localhost:8000/auth/github/status/default_user`
+            `${API_BASE_URL}/auth/github/status/default_user`
           );
         }
 
@@ -120,7 +121,7 @@ export function GitHubAuth({ userId, onAuthUpdate }: GitHubAuthProps) {
     setAuthenticating(true);
     try {
       // Get GitHub auth URL
-      const response = await fetch("http://localhost:8000/auth/github/url");
+      const response = await fetch("${API_BASE_URL}/auth/github/url");
       if (response.ok) {
         const data = await response.json();
 
@@ -296,16 +297,13 @@ export function GitHubOAuthCallback() {
 
           console.log("Using user ID for OAuth:", userId);
 
-          const response = await fetch(
-            "http://localhost:8000/auth/github/callback",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ code, user_id: userId }),
-            }
-          );
+          const response = await fetch("${API_BASE_URL}/auth/github/callback", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ code, user_id: userId }),
+          });
 
           if (response.ok) {
             await response.json();
