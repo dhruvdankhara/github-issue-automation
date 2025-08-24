@@ -123,11 +123,12 @@ export function GitHubAuth({ userId, onAuthUpdate }: GitHubAuthProps) {
       // Get GitHub auth URL
       const response = await fetch(`${API_BASE_URL}/auth/github/url`);
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
 
         // Open GitHub OAuth in a popup
         const popup = window.open(
-          data.auth_url,
+          // data.auth_url,
+          "https://github.com/login/oauth/authorize?client_id=Ov23li8TjGABi31Khf9V&redirect_uri=https%3A%2F%2Fgithub-issue-automation.onrender.com%2Fauth%2Fgithub%2Fcallback&scope=repo%2Cread%3Auser&state=github_auth",
           "github-auth",
           "width=600,height=600,scrollbars=yes,resizable=yes"
         );
