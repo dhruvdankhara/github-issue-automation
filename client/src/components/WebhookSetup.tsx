@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -9,16 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import {
-  Webhook,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  ExternalLink,
-  Copy,
-  Loader2,
-} from "lucide-react";
-import { toast } from "sonner";
+import { Webhook, CheckCircle, Loader2 } from "lucide-react";
 import { ManualWebhookGuide } from "./ManualWebhookGuide";
 
 interface WebhookSetupProps {
@@ -49,7 +39,6 @@ export function WebhookSetup({
     null
   );
   const [loading, setLoading] = useState(false);
-  const [setupLoading, setSetupLoading] = useState(false);
 
   const fetchWebhookStatus = async () => {
     if (!userId || !repoFullName) return;
@@ -72,57 +61,6 @@ export function WebhookSetup({
     } finally {
       setLoading(false);
     }
-  };
-
-  const setupWebhook = async () => {
-    if (!userId || !repoFullName) return;
-
-    setSetupLoading(true);
-    try {
-      const response = await fetch(
-        `http://localhost:8000/github/webhook/${userId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            repo_full_name: repoFullName,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        toast.success("Webhook configured successfully!");
-        setWebhookStatus({
-          configured: true,
-          webhook_url: data.webhook_url,
-          events: data.events,
-          active: true,
-        });
-      } else {
-        const error = await response.json();
-        toast.error(error.detail || "Failed to setup webhook");
-      }
-    } catch (error) {
-      console.error("Error setting up webhook:", error);
-      toast.error("Failed to setup webhook");
-    } finally {
-      setSetupLoading(false);
-    }
-  };
-
-  const copyWebhookUrl = () => {
-    if (webhookStatus?.webhook_url) {
-      navigator.clipboard.writeText(webhookStatus.webhook_url);
-      toast.success("Webhook URL copied to clipboard");
-    }
-  };
-
-  const openGitHubWebhookSettings = () => {
-    const [owner, repo] = repoFullName.split("/");
-    window.open(`https://github.com/${owner}/${repo}/settings/hooks`, "_blank");
   };
 
   const handleDialogOpen = (open: boolean) => {

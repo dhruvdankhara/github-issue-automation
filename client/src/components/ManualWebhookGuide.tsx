@@ -8,13 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import {
-  BookOpen,
-  Copy,
-  ExternalLink,
-  CheckCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { BookOpen, Copy, ExternalLink, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface ManualWebhookGuideProps {

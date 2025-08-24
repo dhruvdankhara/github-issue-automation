@@ -9,6 +9,13 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
+interface CodeProps {
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
 export function MarkdownRenderer({
   content,
   className,
@@ -20,7 +27,7 @@ export function MarkdownRenderer({
         rehypePlugins={[rehypeHighlight, rehypeRaw]}
         components={{
           // Custom component overrides for better styling
-          code: ({ inline, className, children, ...props }) => {
+          code: ({ inline, className, children, ...props }: CodeProps) => {
             const match = /language-(\w+)/.exec(className || "");
 
             if (inline) {
