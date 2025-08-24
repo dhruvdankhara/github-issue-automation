@@ -1,0 +1,167 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { Repository } from "../../lib/supabase";
+
+interface RepositoryState {
+  repositories: Repository[];
+  selectedRepository: Repository | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: RepositoryState = {
+  repositories: [],
+  selectedRepository: null,
+  loading: false,
+  error: null,
+};
+
+export const fetchRepositories = createAsyncThunk(
+  "repositories/fetchRepositories",
+  async (userId: string) => {
+    const response = await fetch(
+      `http://localhost:8000/repositories/${userId}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.repositories as Repository[];
+  }
+);
+
+export const addRepository = createAsyncThunk(
+  "repositories/addRepository",
+  async ({
+    userId,
+    repoData,
+  }: {
+    userId: string;
+    repoData: {
+      name: string;
+      full_name: string;
+      description?: string;
+      url: string;
+    };
+  }) => {
+    const response = await fetch(
+      `http://localhost:8000/repositories?user_id=${userId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(repoData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.success) {
+      return data.repository as Repository;
+    } else {
+      throw new Error(data.message || "Failed to add repository");
+    }
+  }
+);
+
+export const deleteRepository = createAsyncThunk(
+  "repositories/deleteRepository",
+  async ({
+    repositoryId,
+    userId,
+  }: {
+    repositoryId: string;
+    userId: string;
+  }) => {
+    const response = await fetch(
+      `http://localhost:8000/repositories/${repositoryId}?user_id=${userId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.success) {
+      return repositoryId;
+    } else {
+      throw new Error(data.message || "Failed to delete repository");
+    }
+  }
+);
+
+const repositorySlice = createSlice({
+  name: "repositories",
+  initialState,
+  reducers: {
+    setSelectedRepository: (
+      state,
+      action: PayloadAction<Repository | null>
+    ) => {
+      state.selectedRepository = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch Repositories
+      .addCase(fetchRepositories.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRepositories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.repositories = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchRepositories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch repositories";
+      })
+      // Add Repository
+      .addCase(addRepository.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addRepository.fulfilled, (state, action) => {
+        state.loading = false;
+        state.repositories.unshift(action.payload);
+        state.error = null;
+      })
+      .addCase(addRepository.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to add repository";
+      })
+      // Delete Repository
+      .addCase(deleteRepository.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteRepository.fulfilled, (state, action) => {
+        state.loading = false;
+        state.repositories = state.repositories.filter(
+          (repo) => repo.id !== action.payload
+        );
+        if (state.selectedRepository?.id === action.payload) {
+          state.selectedRepository = null;
+        }
+        state.error = null;
+      })
+      .addCase(deleteRepository.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to delete repository";
+      });
+  },
+});
+
+export const { setSelectedRepository, clearError } = repositorySlice.actions;
+export default repositorySlice.reducer;
