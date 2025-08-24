@@ -58,7 +58,7 @@ in_memory_repositories: Dict[str, List[Dict]] = {}  # user_id -> repositories li
 # GitHub OAuth configuration
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "your_github_client_id")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "your_github_client_secret")
-GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI", f"{BACKEND_URL}/auth/github/callback")
+GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI", f"https://github-issue-automation.onrender.com/auth/github/callback")
 
 security = HTTPBearer(auto_error=False)
 
