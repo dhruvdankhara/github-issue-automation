@@ -11,37 +11,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    target: "es2020",
-    sourcemap: false,
-    minify: "esbuild",
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          redux: ["@reduxjs/toolkit", "react-redux"],
-        },
-      },
-    },
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true,
-    },
-  },
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-router-dom",
-      "@reduxjs/toolkit",
-      "react-redux",
-      "react-hook-form",
-      "lucide-react",
-    ],
-    force: true,
-  },
-  esbuild: {
-    target: "es2020",
-  },
 });
