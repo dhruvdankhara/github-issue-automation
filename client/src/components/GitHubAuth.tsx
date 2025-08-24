@@ -123,12 +123,11 @@ export function GitHubAuth({ userId, onAuthUpdate }: GitHubAuthProps) {
       // Get GitHub auth URL
       const response = await fetch(`${API_BASE_URL}/auth/github/url`);
       if (response.ok) {
-        await response.json();
+        const data = await response.json();
 
         // Open GitHub OAuth in a popup
         const popup = window.open(
-          // data.auth_url,
-          "https://github.com/login/oauth/authorize?client_id=Ov23li8TjGABi31Khf9V&redirect_uri=https%3A%2F%2Fgithub-issue-automation.onrender.com%2Fauth%2Fgithub%2Fcallback&scope=repo%2Cread%3Auser&state=github_auth",
+          data.auth_url,
           "github-auth",
           "width=600,height=600,scrollbars=yes,resizable=yes"
         );
@@ -298,7 +297,7 @@ export function GitHubOAuthCallback() {
 
           console.log("Using user ID for OAuth:", userId);
 
-          const response = await fetch("${API_BASE_URL}/auth/github/callback", {
+          const response = await fetch(`${API_BASE_URL}/auth/github/callback`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
