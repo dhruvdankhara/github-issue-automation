@@ -6,36 +6,40 @@ import {
   clearIssues,
   retryAutomation,
 } from "../store/slices/issuesSlice";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../../../client/src/components/Navbar";
 import {
   AutomationStatusBadge,
   AutomationStatusDetails,
-} from "../components/AutomationStatusBadge";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
+} from "../../../client/src/components/AutomationStatusBadge";
+import { Button } from "../../../client/src/components/ui/button";
+import { Input } from "../../../client/src/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "../../../client/src/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../components/ui/dialog";
+} from "../../../client/src/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../components/ui/select";
-import { Badge } from "../components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+} from "../../../client/src/components/ui/select";
+import { Badge } from "../../../client/src/components/ui/badge";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../../client/src/components/ui/avatar";
 import {
   Search,
   ExternalLink,
@@ -50,7 +54,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { GitHubIssue } from "../lib/supabase";
-import { MarkdownRenderer } from "../components/MarkdownRenderer";
+import { MarkdownRenderer } from "../../../client/src/components/MarkdownRenderer";
 
 // Types for GitHub API responses
 type GitHubComment = {

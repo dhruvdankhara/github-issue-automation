@@ -6,19 +6,19 @@ import {
   deleteRepository,
 } from "../store/slices/repositorySlice";
 import { setSelectedRepository } from "../store/slices/repositorySlice";
-import { Navbar } from "../components/Navbar";
-import { GitHubAuth } from "../components/GitHubAuth";
-import { RepositoryAccessStatus } from "../components/RepositoryAccessStatus";
-import { GitHubRepositoryBrowser } from "../components/GitHubRepositoryBrowser";
-import { WebhookSetup } from "../components/WebhookSetup";
-import { Button } from "../components/ui/button";
+import { Navbar } from "../../../client/src/components/Navbar";
+import { GitHubAuth } from "../../../client/src/components/GitHubAuth";
+import { RepositoryAccessStatus } from "../../../client/src/components/RepositoryAccessStatus";
+import { GitHubRepositoryBrowser } from "../../../client/src/components/GitHubRepositoryBrowser";
+import { WebhookSetup } from "../../../client/src/components/WebhookSetup";
+import { Button } from "../../../client/src/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "../../../client/src/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -26,8 +26,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../components/ui/dialog";
-import { Badge } from "../components/ui/badge";
+} from "../../../client/src/components/ui/dialog";
+import { Badge } from "../../../client/src/components/ui/badge";
 import { Plus, Github, ExternalLink, Trash2, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 
